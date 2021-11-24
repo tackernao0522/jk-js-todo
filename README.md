@@ -333,3 +333,127 @@ const onClickAdd = () => {
 
 document.getElementById("add-button").addEventListener('click', () => onClickAdd());
 ```
+
+## タスク完了機能
+
++ `index.html`を編集<br>
+
+```
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JavaScriptのみでTodoアプリ</title>
+    <link rel="stylesheet" href="./styles.css">
+    <script src="./index.js" type="text/javascript" defer></script>
+</head>
+
+<body>
+    <div class="input-area">
+        <input id="add-text" placeholder="TODOを入力">
+        <button id="add-button">追加</button>
+    </div>
+    <div class="incomplete-area">
+        <p class="title">未完了のTODO</p>
+        <ul id="incomplete-list">
+            <div class="list-row">
+                <li>TODOです</li>
+                <button>完了</button>
+                <button>削除</button>
+            </div>
+            <div class="list-row">
+                <li>TODOです</li>
+                <button>完了</button>
+                <button>削除</button>
+            </div>
+        </ul>
+    </div>
+    <div class="complete-area">
+        <p class="title">完了したTODO</p>
+        <ul id="complete-list">
+            <div class="list-row">
+                <li>TODOでした</li>
+                <button>戻す</button>
+            </div>
+        </ul>
+    </div>
+</body>
+
+</html>
+```
+
++ `index.js`を編集<br>
+
+```
+const onClickAdd = () => {
+    // テキストボックスの値を取得し
+    const inputText = document.getElementById("add-text").value;
+    document.getElementById("add-text").value = ""; // テキストボックスを初期化
+
+    // div生成
+    const div = document.createElement('div');
+    div.className = "list-row"; // divタグにclass="list-row"を付与する
+
+    // liタグ生成
+    const li = document.createElement('li');
+    li.innerText = inputText; // liタグに入力した値を格納する
+
+    // button(完了)タグ作成
+    const completeButton = document.createElement('button');
+    completeButton.innerText = '完了';
+    completeButton.addEventListener("click", () => {
+        // 押された削除ボタンの親タグ(div list-row)を未完了リストから削除
+        deleteFromIncompleteList(completeButton.parentNode);
+
+        // 完了リストに追加する
+        const addTarget = completeButton.parentNode;
+
+        // div.list-rowの最初の子要素のテキストが取れる
+        const text = addTarget.firstElementChild.innerText;
+
+        // div以下を初期化
+        addTarget.textContent = null;
+
+        // liタグ生成
+        const li = document.createElement('li');
+        li.innerText = text;
+
+        // buttonタグ生成
+        const backButton = document.createElement('button');
+        backButton.innerText = '戻す';
+
+        // divタグの子要素に各要素を設定
+        addTarget.appendChild(li);
+        addTarget.appendChild(backButton);
+
+        // 完了リストに追加
+        document.getElementById('complete-list').appendChild(addTarget);
+    });
+
+    // button(削除)タグ作成
+    const deleteButton = document.createElement('button');
+    deleteButton.innerText = '削除';
+    deleteButton.addEventListener("click", () => {
+        // 押された削除ボタンの親タグ(div list-row)を未完了リストから削除
+        deleteFromIncompleteList(deleteButton.parentNode);
+    })
+
+    // divタグの子要素に各要素を設定
+    div.appendChild(li);
+    div.appendChild(completeButton);
+    div.appendChild(deleteButton);
+
+    // 未完了のリストに追加(id="incomplete-list"の子要素に設定)
+    document.getElementById('incomplete-list').appendChild(div);
+};
+
+// 未完了リストから指定の要素を削除(共通化)
+const deleteFromIncompleteList = (target) => {
+    document.getElementById('incomplete-list').removeChild(target); // incomplete-listの子要素を削除できる
+}
+
+document.getElementById("add-button").addEventListener('click', () => onClickAdd());
+```
